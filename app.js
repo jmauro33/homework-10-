@@ -1,7 +1,8 @@
-var manager = require ("manager.js")
-var employee = require ("employee.js")
-var engineer = require ("engineer.js")
-var intern = require ("intern.js")
+
+var manager = require ("./lib/manager")
+var employee = require ("./lib/employee")
+var engineer = require ("./lib/engineer")
+var intern = require ("./lib/intern")
 
 var inquirer = require('inquirer');
 inquirer
@@ -12,5 +13,7 @@ inquirer
    
   });
 
-  
+
+
+
 
