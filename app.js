@@ -2,6 +2,7 @@
 var manager = require ("./lib/manager")
 var engineer = require ("./lib/engineer")
 var intern = require ("./lib/intern")
+var fs = require("fs")
 var employeesarray = []
 
 var inquirer = require('inquirer');
@@ -37,7 +38,8 @@ inquirer
         },
       )
     .then(function(response){
-      return {role: answers.role,officenumber:response.officenumber}
+      answers.officenumber = response.officenumber
+      return answers
     })
     } 
     if (answers.role === "engineer"){
@@ -49,7 +51,8 @@ inquirer
       },
      )
      .then(function(response){
-      return {role: answers.role,github:response.github}
+       answers.github = response.github
+      return answers
     })
     }
     if (answers.role === "intern"){
@@ -61,12 +64,14 @@ inquirer
       },
      )
      .then(function(response){
-      return {role: answers.role,school:response.school}
+      answers.school = response.school
+      return answers
     })
     }
   })
   .then(answers => {
   if (answers.role === "manager"){
+    console.log(answers)
     var newManager = new manager(answers.name,1,answers.email,"manager",answers.officenumber)
   employeesarray.push(newManager);
   } 
@@ -88,8 +93,37 @@ inquirer
   });
 
 function generateHTML(){
-  var manager = employeesarray.filter(employee => employee.title === "manager");
-  console.log(manager);
+  var managers = employeesarray.filter(employee => employee.title === "manager");
+  var engineers = employeesarray.filter(employee => employee.title === "engineer");
+  var interns = employeesarray.filter(employee => employee.title === "intern");
+  console.log(managers);
+  console.log(engineers);
+  console.log(interns);
+  var cards = ""
+  for (var i = 0; i < managers.length; i++ ){
+    var currentManager = managers[i];
+    cards += currentManager.createCard(currentManager)
+    var managerHTML = managers [i].getTemplate(currentManager,cards);
+    console.log(managerHTML);
+    fs.writeFileSync("./output/manager.html",managerHTML);
+  }
+  for (var i = 0; i < engineers.length; i++ ){
+    var currentEngineer = engineers[i];
+    cards += currentEngineer.createCard(currentEngineer,cards)
+    var engineerHTML = engineers [i].getTemplate(currentEngineer);
+    console.log(engineerHTML);
+    fs.writeFileSync("./output/engineer.html",engineerHTML);
+  }
+  for (var i = 0; i < interns.length; i++ ){
+    var currentIntern = interns[i];
+    cards += currentIntern.createCard(currentIntern,cards)
+    var internHTML = interns [i].getTemplate(currentIntern);
+    console.log(internHTML);
+    fs.writeFileSync("./output/intern.html",internHTML);
+  }
+  var newEmployee = new employee();
+  var teamHTML = newEmployee.getTemplate({title:"team"},cards);
+  fs.writeFileSync("./output/team.html",teamHTML);
 }
 
 
